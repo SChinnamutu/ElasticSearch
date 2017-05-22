@@ -8,7 +8,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<context:annotation-config/>
-	<bean name="mainBean" class="com.perf.blog.elasticsearch.SpringElasticsearchExample"/>
+	<bean name="mainBean" class="com.perf.blog.main.SpringElasticsearchExample"/>
  
     <elasticsearch:repositories base-package="com.perf.blog.elasticsearch"/>
     <elasticsearch:node-client id="client" local="true"/>
