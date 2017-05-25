@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
+import org.elasticsearch.action.admin.indices.status.IndicesStatusResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
@@ -91,6 +92,18 @@ public class JavaAPIMethods {
 		 	logger.info("Client is create successfully and the client is " +client );
 	        return client;
 	    }
+	 
+	 public long getNumberOfDocuments(Client client,String indexName) {
+		 Long count  = null;
+		 IndicesStatusResponse response = null;
+	     try {
+	    	 response = client.admin().indices().prepareStatus(indexName).execute().actionGet();
+		     count = response.getIndex(indexName).getDocs().getNumDocs();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	    return count;
+	 }
 	 
 	//Create anode
 	 public void createNode(){

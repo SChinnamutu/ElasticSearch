@@ -23,15 +23,18 @@ public class JavaAPIMultiIndexSearch {
 
 	 public static void main(String[] args) {
 		    JavaAPIMultiIndexSearch index =  new JavaAPIMultiIndexSearch();
-	    	List<Article> articles = new DBIntegration().getArticles();
-	    	index.doMechanism(articles);
+	    	//List<Article> articles = new DBIntegration().getArticles();
+	    	//index.doMechanism(articles);
+	    	 Node node     = nodeBuilder().node();
+			 Client client = node.client();
+	    	index.listAllIAndDeletendices(client);
 	  }
 			
 	  public void doMechanism(List<Article> articles) {
 		 boolean isParent = true,childRelation = true;
 		 Node node     = nodeBuilder().node();
 		 Client client = node.client();
-		 this.listAllIndices(client);
+		 this.listAllIAndDeletendices(client);
 		 for (int i = 0; i < PerfConstant.ELS_INDICES.length; i++) {
 			 System.out.println("Checking Index Name is " + PerfConstant.ELS_INDICES[i]);
 	    	 if(this.isIndexExist(client, PerfConstant.indices[i])){
@@ -133,7 +136,7 @@ public class JavaAPIMultiIndexSearch {
 		}
 
 		//Get All Indices Name
-		private void listAllIndices(Client client){
+		private void listAllIAndDeletendices(Client client){
 			try {
 				  String[] indexList = client.admin().cluster().prepareState().execute().actionGet().getState().getMetaData().concreteAllIndices();
 				  System.out.println("Index List Size size : " + indexList.length);

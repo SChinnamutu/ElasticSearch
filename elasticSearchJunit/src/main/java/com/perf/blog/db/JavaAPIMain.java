@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
+import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
@@ -24,45 +25,86 @@ public class JavaAPIMain {
     
 	
 	public static void main(String[] args) {
-		List<Article> articles = new DBIntegration().getArticles();
-		new  JavaAPIMain().beganSearch(articles);
+		//List<Article> articles = new DBIntegration().getArticles();
+		JavaAPIMain main = new  JavaAPIMain();
+		//main.beganSearch(articles);
+		//main.isIndexExists("employee");
+		main.listIndeices();
+		//main.getNumberOfDocuments("kodcucom_3");
+		//if(main.isIndexExists("test")){
+		//	main.deleteIndex("test");
+		//}
+		//main.save(articles);
 	}
+	
+	
 	
 	public Client getClient(){
-		Node node     = nodeBuilder().node();
+		Node node  = nodeBuilder().node();
 		return node.client();
 	}
+	//Get All Indices Name
+	public void listIndeices(){
+		try {
+			  String[] indexList = getClient().admin().cluster().prepareState().execute().actionGet().getState().getMetaData().concreteAllIndices();
+			  System.out.println("Index List Size size : " + indexList.length);
+			  for (String index : indexList) {
+				  System.out.println("Index Name " + index);
+				  //getNumberOfDocuments(index);
+				 // deleteIndex(index);
+		      }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	 }
+	
+	public long getNumberOfDocuments(String indexName) {
+		 Long count  = null;
+		// IndicesStatusResponse response = null;
+	     try {
+	    	 //response = getClient().admin().indices().prepareStatus(indexName).execute().actionGet();
+		     //count = response.getIndex(indexName).getDocs().getNumDocs();
+	    	 final CountResponse response = getClient().prepareCount(indexName)
+	    	            .execute()
+	    	            .actionGet();
+	    	    count = response.getCount();
+		     System.out.println(indexName +" consists of records " + count);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	    return count;
+	 }
 	
 	 //Exist Index
-    public boolean isIndexExists(Client  client , String indexName){
-    	boolean isExist = client.admin().indices().prepareExists(indexName).get().isExists();
+    public boolean isIndexExists(String indexName){
+    	boolean isExist = getClient().admin().indices().prepareExists(indexName).get().isExists();
         return isExist;
     }
 	 
 	 //Delete index
-	 public void deleteIndex(Client client,String index){
-		 DeleteIndexResponse deleteResponse = client.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
+	 public void deleteIndex(String index){
+		 DeleteIndexResponse deleteResponse = getClient().admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
 		 System.out.println(index + " is deleted? "+ deleteResponse.isAcknowledged());
 	 }
 	 
 	public void beganSearch(List<Article> articles) {
 		 Client client = getClient();
-		 if(isIndexExists(client, "kodcucom")){
+		 /*if(isIndexExists(client, "kodcucom")){
 			 System.out.println("Yes Index is existing and goign to delete");
 			 deleteIndex(client, "kodcucom");
-		 }
-		 
-	     for (Article article : articles) {
+		 }*/
+		System.out.println("Article size is " + articles.size()); 
+	    for (Article article : articles) {
 	    	 String [] ar = new String[1]; 
 		     ar[0] = article.getTags();
-	    	 client.prepareIndex("kodcucom", "article", article.getId()).setSource(putJsonDocument(article)).execute().actionGet();
+	    	 client.prepareIndex("kodcucom_test_1", "article_test_1", article.getId()).setSource(putJsonDocument(article)).execute().actionGet();
 		}   
-	    getDocument(client, "kodcucom", "article", "10");
-	    updateDocument(client, "kodcucom", "article", "1", "title", "ElasticSearch: Java API");
+	    getDocument(client, "kodcucom_test_1", "article_test_1", "69561");
+	/*    updateDocument(client, "kodcucom", "article", "1", "title", "ElasticSearch: Java API");
         updateDocument(client, "kodcucom", "article", "1", "tags", new String[]{"bigdata"});
         getDocument(client, "kodcucom", "article", "1");
         searchDocument(client, "kodcucom", "article", "title", "ElasticSearch");
-        deleteDocument(client, "kodcucom", "article", "1");
+        deleteDocument(client, "kodcucom", "article", "1");*/
         //node.close();
 	}
 	
@@ -78,8 +120,11 @@ public class JavaAPIMain {
 	    }
 	    
 	    public void getDocument(Client client, String index, String type, String id){
-	        GetResponse getResponse = client.prepareGet(index, type, id).execute().actionGet();
+	    	long start = System.currentTimeMillis();
+	        GetResponse getResponse = client.prepareGet().execute().actionGet();
 	        Map<String, Object> source = getResponse.getSource();
+	        long end = System.currentTimeMillis();
+	        System.out.println("DEBUG: Logic A took " + (end - start) + " MilliSeconds");
 	        System.out.println("------------------------------");
 	        System.out.println("Index: " + getResponse.getIndex());
 	        System.out.println("Type: " + getResponse.getType());
@@ -139,7 +184,14 @@ public class JavaAPIMain {
 	        System.out.println("deleteDocument() success");
 	    }
 
-		
+	    public void save(List<Article> articles){
+			for (Article article : articles) {
+		    	 String [] ar = new String[1]; 
+			     ar[0] = article.getTags();
+		    	 getClient().prepareIndex("kodcucom_3", "article_3", article.getId()).setSource(putJsonDocument(article)).execute().actionGet();
+			}  
+			System.out.println("save() completed");
+		}
 
 
 }

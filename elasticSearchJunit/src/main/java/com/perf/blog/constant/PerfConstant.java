@@ -7,6 +7,7 @@ public class PerfConstant {
 	public static final String INSERT_QUERY = "INSERT INTO tweets (tweet_id,user_name,tweet_text,created_at) values (?,?,?,?)";
 	public static final String INSERT_QUERY_ARTICLE = "INSERT INTO article (title,content,postDate,tags,author) values (?,?,?,?,?)";
 	public static final String SELECT_QUERY_ARTICLE = "SELECT * FROM article  ORDER BY id ASC LIMIT 15;";
+	public static final String SELECT_ALL_QUERY_ARTICLE = "SELECT * FROM article;";
 	public static final String indices[] = {"employee","role","address"};
 	public static final String types[] = {"article","article","article"};
 	

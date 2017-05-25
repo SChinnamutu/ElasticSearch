@@ -41,7 +41,7 @@ public class SearchClientServiceImpl //implements SearchClientService
             //Try starting search client at context loading
             try
             {
-                Settings settings = ImmutableSettings.settingsBuilder().put(ElasticSearchReservedWords.CLUSTER_NAME.getText(), searchServerClusterName).build();
+                Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", "jaidev").build();
                 
                 TransportClient transportClient = new TransportClient(settings);
 

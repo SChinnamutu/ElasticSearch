@@ -33,7 +33,7 @@ public class DBIntegration {
 
 	    public void insert(){
     	 	try {
-    	 		for (int i = 0; i < 1000; i++) {
+    	 		for (int i = 0; i < 69700; i++) {
     	 			PreparedStatement preparedStmt = conn.prepareStatement(PerfConstant.INSERT_QUERY_ARTICLE, Statement.RETURN_GENERATED_KEYS);
                     preparedStmt.setString(1, "Isco");
                     preparedStmt.setString(2, "I will kill you buddy");
@@ -48,11 +48,16 @@ public class DBIntegration {
 			}
 	    }
 	    
+	    public static void main(String[] args) {
+			//new DBIntegration().insert();
+			System.out.println("Success");
+		}
+	    
 	    public  List<Article> getArticles(){
 	    	List<Article> articles = new ArrayList<Article>();
     	 	try {
-    	 		PreparedStatement preparedStmt = conn.prepareStatement(PerfConstant.SELECT_QUERY_ARTICLE);
-                ResultSet resultSet = preparedStmt.executeQuery(PerfConstant.SELECT_QUERY_ARTICLE);
+    	 		PreparedStatement preparedStmt = conn.prepareStatement(PerfConstant.SELECT_ALL_QUERY_ARTICLE);
+                ResultSet resultSet = preparedStmt.executeQuery(PerfConstant.SELECT_ALL_QUERY_ARTICLE);
                 while(resultSet.next()){
                 	Article article = new Article();
                 	article.setId(String.valueOf(resultSet.getInt("id")));
@@ -62,9 +67,9 @@ public class DBIntegration {
                 	article.setTags(resultSet.getString("tags"));
                 	article.setAuthor(resultSet.getString("author"));
                 	articles.add(article);
-                	if(articles!= null && articles.size() == 25){
+                	/*if(articles!= null && articles.size() == 25){
                 		break;
-                	}
+                	}*/
                 }
                 System.out.println("Success and article is "+articles.size());
 			} catch (Exception e) {
